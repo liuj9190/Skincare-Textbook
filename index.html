@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>你的保養觀念正確嗎？5題保養知識挑戰</title>
+
+<style>
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+body{
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;
+  align-items:stretch;
+  font-family:"Noto Sans TC", Arial, sans-serif;
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(255,255,255,0.45),
+      rgba(255,255,255,0.78)
+    ),
+    url("background1.jpg") center/cover no-repeat fixed;
+  padding:12px;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+#app{
+  width:100%;
+  max-width:560px;
+  margin:0 auto;
+  background:rgba(255,255,255,0.72);
+  backdrop-filter:blur(10px);
+  border-radius:22px;
+  padding:clamp(14px, 2.4vh, 24px) clamp(14px, 4vw, 22px);
+  box-sizing:border-box;
+  box-shadow:0 8px 28px rgba(46,139,87,0.10);
+  border:1px solid rgba(255,255,255,0.6);
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  max-height:100dvh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+#progress-wrap{
+  flex:0 0 auto;
+  margin-bottom:clamp(8px, 1.6vh, 14px);
+}
+#progress-text{
+  font-size:clamp(0.75em, 1.6vh, 0.85em);
+  color:#7A8A99;
+  margin-bottom:6px;
+}
+#progress-bar{
+  width:100%;
+  height:5px;
+  background:#DCE5EE;
+  border-radius:99px;
+  overflow:hidden;
+}
+#progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#2E8B57,#4FB07A);
+  border-radius:99px;
+  transition:width .35s ease;
+}
+
+#question{
+  flex:0 0 auto;
+  font-size:clamp(1em, 2.4vh, 1.22em);
+  line-height:1.55;
+  color:#1F2D3D;
+  margin-bottom:clamp(8px, 1.8vh, 16px);
+}
+
+#options{
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+.option{
+  width:100%;
+  padding:clamp(10px, 1.8vh, 14px) clamp(12px, 3vw, 15px);
+  margin:clamp(4px, 1vh, 8px) 0;
+  font-size:clamp(0.92em, 2vh, 1em);
+  border-radius:14px;
+  border:1px solid #C3D1DE;
+  background:#fff;
+  cursor:pointer;
+  transition:all .18s ease;
+  text-align:left;
+  color:#1F2D3D;
+  line-height:1.45;
+}
+
+.option:hover{
+  background:#F3F7FB;
+  border-color:#A9C4D8;
+}
+
+.option:disabled{
+  cursor:default;
+  opacity:0.95;
+}
+
+.correct-border{
+  border:2px solid #2E8B57 !important;
+  background:#EAF7F0 !important;
+  animation:pop .35s ease;
+}
+.wrong-border{
+  border:2px solid #C94A4A !important;
+  background:#FDEDED !important;
+  animation:shake .35s ease;
+}
+
+@keyframes pop{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.03);}
+  100%{transform:scale(1);}
+}
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-4px);}
+  50%{transform:translateX(4px);}
+  75%{transform:translateX(-3px);}
+  100%{transform:translateX(0);}
+}
+
+#feedback{
+  flex:0 0 auto;
+  margin-top:clamp(8px, 1.6vh, 14px);
+  font-size:clamp(1.05em, 2.2vh, 1.25em);
+  font-weight:600;
+  min-height:1.4em;
+}
+.correct{ color:#2E8B57; }
+.incorrect{ color:#C94A4A; }
+
+#stats{
+  flex:0 0 auto;
+  margin-top:4px;
+  font-size:clamp(0.8em, 1.7vh, 0.88em);
+  color:#7A8A99;
+  min-height:1.2em;
+}
+
+#explanation{
+  flex:0 0 auto;
+  margin-top:clamp(4px, 1vh, 9px);
+  font-size:clamp(0.85em, 1.8vh, 0.96em);
+  color:#4F5F6F;
+  line-height:1.55;
+}
+
+#next{
+  flex:0 0 auto;
+  margin-top:clamp(10px, 1.8vh, 18px);
+  padding:clamp(10px, 1.8vh, 13px) 22px;
+  font-size:clamp(0.95em, 2vh, 1em);
+  border:none;
+  border-radius:20px;
+  background:#2E8B57;
+  color:#fff;
+  cursor:pointer;
+  transition:background .18s ease, transform .18s ease;
+  align-self:flex-start;
+}
+#next:hover{
+  background:#246B45;
+  transform:translateY(-1px);
+}
+
+#finish{
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+}
+
+.finish-step{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(6px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.step-next{
+  display:inline-block;
+  margin:clamp(14px, 2.4vh, 22px) auto 0;
+  padding:clamp(10px, 1.8vh, 13px) 24px;
+  font-size:clamp(0.95em, 2vh, 1em);
+  border:none;
+  border-radius:20px;
+  background:#2E8B57;
+  color:#fff;
+  cursor:pointer;
+  transition:background .18s ease, transform .18s ease;
+}
+.step-next:hover{
+  background:#246B45;
+  transform:translateY(-1px);
+}
+
+.result-card{
+  background:linear-gradient(160deg,#FFFFFF 0%,#F2F7F4 100%);
+  border-radius:18px;
+  padding:clamp(16px, 2.6vh, 22px) clamp(14px, 3vw, 20px);
+  box-shadow:0 4px 14px rgba(46,139,87,0.10);
+  border:1px solid #DCEBE1;
+  margin-bottom:clamp(10px, 1.8vh, 16px);
+  text-align:left;
+}
+.result-card h2{
+  font-size:clamp(1em, 2.2vh, 1.2em);
+  color:#2F6F4E;
+  margin:0 0 10px;
+  text-align:center;
+}
+.result-type{
+  display:inline-block;
+  font-size:clamp(1em, 2.2vh, 1.15em);
+  font-weight:700;
+  color:#2E8B57;
+  background:#EAF7F0;
+  padding:5px 15px;
+  border-radius:99px;
+  margin:6px 0 8px;
+}
+.result-score{
+  font-size:clamp(1.4em, 3vh, 1.7em);
+  font-weight:700;
+  color:#1F2D3D;
+  margin:4px 0;
+}
+.result-score span{
+  font-size:0.5em;
+  color:#7A8A99;
+  font-weight:400;
+}
+.result-verdict{
+  color:#5F6F7E;
+  line-height:1.65;
+  font-size:clamp(0.85em, 1.8vh, 0.95em);
+  margin:10px 0 0;
+}
+
+.source-note{
+  margin:14px 0 0;
+  padding:12px 14px;
+  background:#F1F5F8;
+  border-left:3px solid #2E8B57;
+  border-radius:0 10px 10px 0;
+  font-size:clamp(0.78em, 1.6vh, 0.86em);
+  color:#5F6F7E;
+  line-height:1.65;
+  text-align:left;
+}
+
+.diagnosis{
+  margin:16px 0 0;
+  padding:16px;
+  background:#FFF9F0;
+  border:1px solid #F0E2C8;
+  border-radius:14px;
+  text-align:left;
+}
+.diagnosis h3{
+  font-size:clamp(0.9em, 1.8vh, 1em);
+  color:#8A6D2F;
+  margin:0 0 8px;
+}
+.diagnosis .diag-type{
+  display:inline-block;
+  font-size:clamp(0.85em, 1.7vh, 0.92em);
+  font-weight:700;
+  color:#8A6D2F;
+  background:#F5E9D0;
+  padding:4px 12px;
+  border-radius:99px;
+  margin-bottom:10px;
+}
+.diagnosis p{
+  color:#5F5233;
+  line-height:1.7;
+  font-size:clamp(0.82em, 1.7vh, 0.9em);
+  margin:0 0 8px;
+}
+.diagnosis p:last-child{
+  margin-bottom:0;
+}
+.diagnosis .perfect{
+  color:#2E8B57;
+  font-weight:700;
+  line-height:1.6;
+  font-size:clamp(0.85em, 1.8vh, 0.92em);
+  margin:0;
+}
+
+.pain-card{
+  background:#FFFFFF;
+  border:1px solid #E1EDE6;
+  border-radius:18px;
+  padding:clamp(16px, 2.6vh, 22px) clamp(14px, 3vw, 20px);
+  box-shadow:0 4px 14px rgba(46,139,87,0.08);
+  text-align:left;
+  margin-bottom:clamp(10px, 1.8vh, 16px);
+}
+.pain-card h2{
+  font-size:clamp(1em, 2.2vh, 1.16em);
+  color:#2F6F4E;
+  margin:0 0 12px;
+  text-align:center;
+}
+.pain-card p{
+  color:#4F5F6F;
+  line-height:1.75;
+  font-size:clamp(0.84em, 1.8vh, 0.94em);
+  margin:0 0 12px;
+}
+.pain-card p:last-child{
+  margin-bottom:0;
+}
+.pain-card ul{
+  margin:0 0 12px;
+  padding-left:20px;
+}
+.pain-card li{
+  color:#4F5F6F;
+  line-height:1.7;
+  font-size:clamp(0.84em, 1.8vh, 0.94em);
+  margin-bottom:6px;
+}
+.pain-card li:last-child{
+  margin-bottom:0;
+}
+
+.book-hero{
+  margin: clamp(6px, 1.5vh, 14px) 0 clamp(10px, 1.8vh, 16px);
+  padding: 0 0 clamp(8px, 1.5vh, 14px);
+  border-bottom:1px solid #E1EDE6;
+}
+.book-hero .eyebrow{
+  font-size:clamp(0.78em, 1.6vh, 0.85em);
+  color:#8A9AA8;
+  letter-spacing:0.05em;
+  margin-bottom:clamp(6px, 1.2vh, 10px);
+}
+
+#book-cover{
+  display:block;
+  margin:0 auto;
+  width:clamp(160px, 32vh, 240px);
+  max-width:80%;
+  height:auto;
+  border-radius:8px;
+  box-shadow:0 10px 28px rgba(46,139,87,0.20);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+#book-cover:hover{
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 14px 34px rgba(46,139,87,0.28);
+}
+
+.book-title{
+  font-size:clamp(1em, 2.2vh, 1.18em);
+  font-weight:700;
+  color:#2F6F4E;
+  margin:clamp(10px, 1.8vh, 14px) 0 0;
+  line-height:1.4;
+}
+.book-subtitle{
+  font-size:clamp(0.8em, 1.7vh, 0.9em);
+  color:#7A8A99;
+  margin:4px 0 0;
+  line-height:1.5;
+}
+
+.book-badges{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:6px;
+  margin:clamp(8px, 1.5vh, 12px) 0 0;
+}
+.book-badges span{
+  font-size:clamp(0.72em, 1.5vh, 0.8em);
+  color:#2F6F4E;
+  background:#EAF7F0;
+  border:1px solid #CFE8DA;
+  padding:3px 10px;
+  border-radius:99px;
+  line-height:1.5;
+}
+
+.book-pitch{
+  margin:clamp(12px, 2vh, 16px) 0 0;
+  padding:clamp(12px, 2vh, 16px);
+  background:#EAF7F0;
+  border-radius:14px;
+  text-align:left;
+}
+.book-pitch p{
+  color:#2F6F4E;
+  line-height:1.7;
+  font-size:clamp(0.85em, 1.8vh, 0.94em);
+  margin:0;
+  font-weight:600;
+}
+
+.store-links{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:clamp(8px, 2vw, 14px);
+  margin-top:clamp(10px, 1.8vh, 16px);
+  width:100%;
+}
+.store-links a{
+  flex:1 1 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.store-links img{
+  width:100%;
+  max-width:clamp(80px, 15vh, 120px);
+  height:auto;
+  cursor:pointer;
+  opacity:0.95;
+  transition:transform .18s ease, opacity .18s ease;
+}
+.store-links img:hover{
+  transform:scale(1.08);
+  opacity:1;
+}
+
+.store-hint{
+  font-size:clamp(0.72em, 1.5vh, 0.8em);
+  color:#8A9AA8;
+  margin-top:8px;
+}
+
+.share-btn{
+  display:inline-block;
+  padding:clamp(10px, 1.8vh, 13px) 24px;
+  font-size:clamp(0.95em, 2vh, 1em);
+  border:none;
+  border-radius:20px;
+  background:#2E8B57;
+  color:#fff;
+  cursor:pointer;
+  transition:background .18s ease, transform .18s ease;
+}
+.share-btn:hover{
+  background:#246B45;
+  transform:translateY(-1px);
+}
+.share-btn.secondary{
+  background:#fff;
+  color:#2E8B57;
+  border:1.5px solid #2E8B57;
+}
+.share-btn.secondary:hover{
+  background:#EAF7F0;
+}
+
+.share-actions{
+  display:flex;
+  gap:10px;
+  margin-top:clamp(14px, 2.2vh, 20px);
+  width:100%;
+}
+.share-actions .share-btn{
+  flex:1 1 0;
+  margin-top:0;
+}
+
+#copy-toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(46,139,87,0.95);
+  color:#fff;
+  padding:10px 20px;
+  border-radius:99px;
+  font-size:0.9em;
+  opacity:0;
+  pointer-events:none;
+  transition:all .3s ease;
+  z-index:99;
+  max-width:90vw;
+  text-align:center;
+}
+#copy-toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+@media (max-width:480px){
+  body{
+    padding:8px;
+    background:
+      radial-gradient(
+        circle at top center,
+        rgba(255,255,255,0.5),
+        rgba(255,255,255,0.82)
+      ),
+      url("background1.jpg") center/cover no-repeat scroll;
+  }
+  #app{
+    border-radius:18px;
+    max-height:calc(100dvh - 16px);
+  }
+  #next{
+    width:100%;
+    border-radius:24px;
+  }
+  .step-next{
+    width:100%;
+    border-radius:24px;
+  }
+  .share-actions .share-btn{
+    border-radius:24px;
+  }
+  .store-links{
+    gap:6px;
+  }
+  .store-links img{
+    max-width:clamp(72px, 20vw, 100px);
+  }
+  #book-cover{
+    width:clamp(150px, 30vh, 200px);
+    max-width:75%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+  <div id="progress-wrap">
+    <div id="progress-text"></div>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+
+  <div style="font-size:clamp(1.1em,2.5vh,1.35em);font-weight:700;color:#2F6F4E;margin-bottom:8px;">你的保養觀念正確嗎？</div>
+  <div style="font-size:.9em;color:#64766B;margin-bottom:14px;line-height:1.5;">5 題快速挑戰，看看你是否掌握日常保養的基本知識。</div>
+  <div id="question"></div>
+  <div id="options"></div>
+
+  <div id="feedback"></div>
+  <div id="stats"></div>
+  <div id="explanation"></div>
+
+  <button id="next" style="display:none;">再來一題 ➜</button>
+</div>
+
+<div id="copy-toast">已複製分享連結！</div>
+
+<script>
+// 書封點擊連結（星出版官網書頁）
+const BOOK_URL = "https://www.morningstar.com.tw/bookinfo.aspx?bookno=0103282";
+
+const questions = [
+{
+ question:"陰天或待在室內時，需要防曬嗎？",
+ options:["不需要，只有大太陽才需要防曬","需要，UVA 可穿透雲層，也可能穿過窗戶玻璃","只要沒有曬紅，就代表沒有紫外線傷害"],
+ answer:1,
+ stats:"陰天與室內，是最容易被忽略的防曬時刻",
+ explanation:"UVA 約占到達地表紫外線的 95%，陰天、雨天都能穿透，連窗戶玻璃也擋不住，會加速光老化。所以防曬是全年、每天的事。",
+ category:"防曬觀念"
+},
+{
+ question:"防曬產品上的 SPF 和 PA，主要分別代表什麼？",
+ options:["SPF 防 UVA；PA 防 UVB","兩者代表完全相同的防護能力","SPF 主要對應 UVB；PA 主要對應 UVA"],
+ answer:2,
+ stats:"SPF、PA 常被誤認為只是數字越高越好",
+ explanation:"SPF 對應 UVB（曬紅、傷害細胞 DNA），PA 對應 UVA（光老化、皺紋鬆弛）。選購時，兩者都要有標示。",
+ category:"防曬觀念"
+},
+{
+ question:"按摩臉部時，哪一種做法比較正確？",
+ options:["用力搓揉，才有按摩效果","輕柔對待，避免大力拉扯肌膚","越頻繁、越用力越好"],
+ answer:1,
+ stats:"保養時，並不是越用力越有效",
+ explanation:"用力搓揉、拉扯不會讓肌膚變緊，反而可能傷到真皮、造成鬆弛。按摩時盡量別讓肌膚表面大幅移動，溫柔就好。",
+ category:"保養手法"
+},
+{
+ question:"想維持肌膚健康，飲食上只吃蔬菜就足夠了嗎？",
+ options:["是，蔬菜含有維生素就夠了","不是，還要留意蛋白質、碳水化合物與脂質等營養","只要補充美容保健品，就不必在意飲食"],
+ answer:1,
+ stats:"肌膚保養，不只是擦在臉上的產品",
+ explanation:"蛋白質是皮膚的組成原料，碳水化合物提供能量，脂質讓肌膚保持潤澤。只吃蔬菜，這三者容易不足，肌膚也不容易透亮。",
+ category:"飲食與肌膚"
+},
+{
+ question:"有機或植物來源的保養品，就一定比較溫和、不刺激嗎？",
+ options:["一定比較溫和，任何膚況都適合","不一定，植物成分也可能刺激肌膚，使用前宜先測試","只要價格高，就不會造成刺激"],
+ answer:1,
+ stats:"天然、有機，不代表每個人都適用",
+ explanation:"天然不等於溫和。有些植物屬於藥草、效果強，肌膚容易粗糙或狀況不佳時可能太刺激。購買前先試用，確認不過敏再買。",
+ category:"成分判斷"
+}
+];
+
+let index = 0;
+let correctCount = 0;
+let wrongQuestions = [];
+
+const appEl = document.getElementById("app");
+const progressText = document.getElementById("progress-text");
+const progressFill = document.getElementById("progress-fill");
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const feedback = document.getElementById("feedback");
+const statsEl = document.getElementById("stats");
+const explanationEl = document.getElementById("explanation");
+const nextBtn = document.getElementById("next");
+
+function scrollAppToTop(){
+  appEl.scrollTo({top:0, behavior:"smooth"});
+}
+
+function loadQuestion(){
+  const q = questions[index];
+
+  progressText.textContent = `第 ${index+1} / ${questions.length} 題`;
+  progressFill.style.width = `${(index / questions.length) * 100}%`;
+
+  questionEl.textContent = q.question;
+  optionsEl.innerHTML = "";
+  feedback.textContent = "";
+  statsEl.textContent = "";
+  explanationEl.textContent = "";
+  nextBtn.style.display = "none";
+
+  q.options.forEach((text, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = text;
+    btn.onclick = () => checkAnswer(btn, i, q);
+    optionsEl.appendChild(btn);
+  });
+
+  nextBtn.textContent = index === questions.length - 1 ? "看結果 ➜" : "再來一題 ➜";
+  scrollAppToTop();
+}
+
+function checkAnswer(btn, selected, q){
+  document.querySelectorAll(".option").forEach((b, i) => {
+    b.disabled = true;
+    if(i === q.answer) b.classList.add("correct-border");
+    if(i === selected && selected !== q.answer) b.classList.add("wrong-border");
+  });
+
+  setTimeout(() => {
+    if(selected === q.answer){
+      feedback.textContent = "✔ 答對了！";
+      feedback.className = "correct";
+      correctCount++;
+    }else{
+      feedback.textContent = "✘ 答錯了！";
+      feedback.className = "incorrect";
+      if(!wrongQuestions.includes(index)) wrongQuestions.push(index);
+    }
+
+    statsEl.textContent = `💡 ${q.stats}`;
+    explanationEl.textContent = q.explanation;
+    nextBtn.style.display = "inline-block";
+    progressFill.style.width = `${((index + 1) / questions.length) * 100}%`;
+  }, 400);
+}
+
+nextBtn.onclick = () => {
+  index++;
+  if(index < questions.length){
+    loadQuestion();
+  }else{
+    showFinish();
+  }
+};
+
+function getResultType(score, total){
+  const ratio = score / total;
+
+  if(ratio === 1) return {
+    type:"保養知識達人",
+    verdict:"5 題全對，你的日常保養觀念很扎實。接下來可以更進一步，學會依膚質與成分挑選適合自己的產品。"
+  };
+  if(ratio >= 0.8) return {
+    type:"保養觀念很有底子",
+    verdict:"你掌握了大部分重點，剛剛答錯的那一題，值得再確認一下。"
+  };
+  if(ratio >= 0.6) return {
+    type:"保養知識待補強",
+    verdict:"你已經有一些正確觀念，剛剛錯的幾題，是不少人容易忽略的細節，也可能正是保養卡關的原因。"
+  };
+  return {
+    type:"保養觀念重新整理中",
+    verdict:"別擔心，保養知識本來就很多。先弄懂基本原則，再決定自己需要什麼，會更有效率。"
+  };
+}
+
+function getDiagnosis(wrongList){
+  if(wrongList.length === 0){
+    return {
+      type:"沒有明顯盲點",
+      desc:"你對防曬、保養手法、飲食與成分判斷，都已有基本掌握。",
+      isPerfect:true
+    };
+  }
+
+  const categories = wrongList.map(i => questions[i].category);
+  const unique = [...new Set(categories)];
+
+  // 防曬觀念相關（第 1、2 題）
+  if(unique.length === 1 && unique[0] === "防曬觀念"){
+    return {
+      type:"防曬觀念",
+      desc:"你這次漏掉的重點，都和紫外線防護有關。UVA 與 UVB 的差異、SPF 與 PA 的分工，是最常見、卻最容易被忽略的一塊。"
+    };
+  }
+
+  // 單一盲點
+  if(unique.length === 1){
+    const map = {
+      "保養手法":"保養手法",
+      "飲食與肌膚":"飲食與肌膚的關係",
+      "成分判斷":"成分判斷"
+    };
+    const descMap = {
+      "保養手法":"你這次漏掉的重點，和保養手法有關。肌膚不是肌肉，用力拉扯不會讓它變緊，反而可能傷到真皮、造成鬆弛。真正該做的是輕柔對待。",
+      "飲食與肌膚的關係":"你這次漏掉的重點，和飲食與肌膚的關係有關。蛋白質、碳水化合物、脂質這三大營養素，各自在肌膚健康中扮演角色，不是只吃蔬菜或靠保健品就夠。",
+      "成分判斷":"你這次漏掉的重點，和成分判斷有關。天然不等於溫和，有些植物屬於藥草、效果強，肌膚狀況不佳時可能過於刺激，購買前先試用最保險。"
+    };
+    const t = map[unique[0]] || unique[0];
+    return {
+      type:t,
+      desc:descMap[t] || "你這次漏掉的重點，集中在同一個面向，這是你的保養觀念裡比較容易被忽略的一塊。"
+    };
+  }
+
+  // 多個盲點
+  return {
+    type:"多個面向",
+    desc:`你這次漏掉的重點，橫跨 ${unique.join("、")}。這代表你的保養觀念不是全錯，而是有幾個不同面向的細節還沒有串起來。與其一個一個補，不如先把基本原則整理一遍。`
+  };
+}
+
+let finishStep = 0;
+let finishResult = null;
+let finishDiagnosis = null;
+
+function showFinish(){
+  finishResult = getResultType(correctCount, questions.length);
+  finishDiagnosis = getDiagnosis(wrongQuestions);
+  finishStep = 0;
+  renderFinishStep();
+}
+
+function renderFinishStep(){
+  const result = finishResult;
+  const diagnosis = finishDiagnosis;
+  const shareText = `我的保養測驗結果是「${result.type}」，你答對幾題？一起來測測看！`;
+
+  if(finishStep === 0){
+    let diagHTML = "";
+
+    if(diagnosis.isPerfect){
+      diagHTML = `<p class="perfect">✔ ${diagnosis.desc}</p>`;
+    }else{
+      diagHTML = `
+        <div class="diag-type">你的保養盲點：${diagnosis.type}</div>
+        <p>${diagnosis.desc}</p>
+      `;
+    }
+
+    appEl.innerHTML = `
+      <div id="finish">
+        <div class="finish-step">
+          <div class="result-card">
+            <h2>🧴 你的保養測驗結果</h2>
+            <div class="result-type">${result.type}</div>
+            <div class="result-score">${correctCount}<span> / ${questions.length} 題答對</span></div>
+            <p class="result-verdict">${result.verdict}</p>
+            <div class="diagnosis">
+              <h3>🔍 盲點診斷</h3>
+              ${diagHTML}
+            </div>
+          </div>
+          <p class="source-note">以上內容整理自《皮膚照護教科書〔經典暢銷版〕》，該書由皮膚科醫師高瀨聰子與預防醫學諮詢專家細川桃共同撰寫。</p>
+          <button class="step-next" id="step-next">這些問題，其實有解 ➜</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if(finishStep === 1){
+    appEl.innerHTML = `
+      <div id="finish">
+        <div class="finish-step">
+          <div class="pain-card">
+            <h2>這些保養細節，很容易被忽略</h2>
+            <p>很多人保養做了很多年，卻一直卡在同樣的問題：</p>
+            <ul>
+              <li>防曬只在大太陽時擦，忽略陰天與室內</li>
+              <li>以為 SPF 越高越安心，卻搞不懂 PA 在防什麼</li>
+              <li>按摩越用力越有效，結果反而拉扯肌膚</li>
+              <li>覺得天然、有機一定溫和，卻忽略自己的膚況</li>
+            </ul>
+            <p>保養知識本來就分散、又容易被簡化，會有盲點是很正常的事。</p>
+          </div>
+          <button class="step-next" id="step-next">看看這本書怎麼教 ➜</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if(finishStep === 2){
+    appEl.innerHTML = `
+      <div id="finish">
+        <div class="finish-step">
+          <div class="book-hero">
+            <div class="eyebrow">— 想把日常保養觀念弄清楚？—</div>
+            <a href="${BOOK_URL}" target="_blank" rel="noopener">
+              <img id="book-cover" src="book1.jpg" alt="《皮膚照護教科書〔經典暢銷版〕》書籍封面">
+            </a>
+            <p class="book-title">《皮膚照護教科書〔經典暢銷版〕》</p>
+            <p class="book-subtitle">從五大膚質檢測、正確清潔與防曬，到保養品成分分析，幫助你建立自己的保養邏輯。</p>
+            <div class="book-badges">
+              <span>暢銷十年</span>
+              <span>全彩圖解</span>
+              <span>附五大膚質自我檢測表</span>
+            </div>
+          </div>
+
+          <div class="book-pitch">
+            <p>與其繼續買錯保養品，不如先弄懂自己的肌膚需要什麼。<br>這本書從膚質判斷、清潔防曬，到成分挑選與飲食照護，系統地為你講解。</p>
+          </div>
+
+          <div class="store-links">
+            <a href="https://www.books.com.tw/products/0011064312?sloc=main" target="_blank" rel="noopener"><img src="22.jpg" alt="通路1"></a>
+            <a href="https://pse.is/9mzvr7" target="_blank" rel="noopener"><img src="23.jpg" alt="通路2"></a>
+            <a href="https://sho.pe/9mzw5s" target="_blank" rel="noopener"><img src="24.jpg" alt="通路3"></a>
+            <a href="https://www.morningstar.com.tw/bookinfo.aspx?bookno=0103282" target="_blank" rel="noopener"><img src="25.jpg" alt="通路4"></a>
+          </div>
+          <p class="store-hint">點擊通路即可前往購買</p>
+
+          <div class="share-actions">
+            <button class="share-btn" id="share-btn">📤 分享給朋友</button>
+            <button class="share-btn secondary" id="restart-btn">🔄 再玩一次</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("share-btn").onclick = async () => {
+      const url = window.location.href;
+      const fullText = `${shareText} ${url}`;
+      try{
+        await navigator.clipboard.writeText(fullText);
+        showToast("已複製連結，貼給朋友吧！");
+      }catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = fullText;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try{
+          document.execCommand("copy");
+          showToast("已複製連結，貼給朋友吧！");
+        }catch(err){
+          prompt("複製這段文字分享給朋友：", fullText);
+        }
+        document.body.removeChild(ta);
+      }
+    };
+
+    document.getElementById("restart-btn").onclick = () => {
+      index = 0;
+      correctCount = 0;
+      wrongQuestions = [];
+      finishStep = 0;
+      location.reload();
+    };
+  }
+
+  const stepNext = document.getElementById("step-next");
+  if(stepNext){
+    stepNext.onclick = () => {
+      finishStep++;
+      renderFinishStep();
+      scrollAppToTop();
+    };
+  }
+
+  scrollAppToTop();
+}
+
+function showToast(msg){
+  const t = document.getElementById("copy-toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
